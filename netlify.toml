@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/:path*"
+  to = "https://chat.xiyangai.cn"
+  status = 200
+  force = true
