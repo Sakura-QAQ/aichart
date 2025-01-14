@@ -1,0 +1,41 @@
+name: Proxy API Requests
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+ 
+      - name: Install dependencies 📦
+        run: npm install
+ 
+      - name: Build 🏭
+        run: npm run build
+ 
+      - name: Deploy 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+ 
+      - name: Configure Proxy ⚙️
+        uses: peaceiris/actions-gh-pages@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROXY_REMOTE_URL: 'https://chat.xiyangai.cn' # 替换为你的API域名
+          PROXY_REMOTE_PREFIX: '/api/' # 你想要代理的路径
+        with:
+          deploy_hook: |
+            sh -c "echo 'noop' > public/.nojekyll"
+            echo 'proxy:/api/=/https://chat.xiyangai.cn/{https://your-github-pages-domain.com/{REPO_PATH}}' > public/.proxy.json
